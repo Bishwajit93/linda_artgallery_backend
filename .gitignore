@@ -1,6 +1,24 @@
-.env
+# Python cache
 __pycache__/
 *.pyc
+
+# Virtual environments
 env/
 env_lindagallery/
+venv/
+*.venv/
+
+# Environment variables
+.env
 .env.*
+!.env.example  # allow a template env file for sharing safe defaults
+
+# Local DB (if using SQLite for tests)
+db.sqlite3
+
+# Media/uploads (optional — comment out if you want media in repo)
+media/
+
+# OS files
+.DS_Store
+Thumbs.db

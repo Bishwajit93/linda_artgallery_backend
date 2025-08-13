@@ -1,11 +1,19 @@
 from django.db import models
 
-class HeroSection(models.Model):
-    title = models.CharField(max_length=100, blank=True, null=True)
-    subtitle = models.CharField(max_length=255, blank=True, null=True)
-    background_image = models.ImageField(upload_to='hero_images/', blank=True, null=True)
-    background_video = models.FileField(upload_to='hero_videos/', blank=True, null=True)
+class Video(models.Model):
+    title = models.CharField(max_length=120)
+    description = models.TextField(blank=True)
+    file = models.FileField(upload_to="videos/")  # uploaded video file
+    poster = models.ImageField(upload_to="video_posters/", blank=True, null=True)  # optional cover image
+    size_label = models.CharField(max_length=32, blank=True)  # e.g. "1920×1080"
+    recorded_at = models.DateField(blank=True, null=True)
+    duration_seconds = models.PositiveIntegerField(blank=True, null=True)
+    order = models.PositiveSmallIntegerField(default=0)
+    is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ["order", "-created_at"]
+
     def __str__(self):
-        return self.title or "Untitled Hero Section"
+        return self.title
