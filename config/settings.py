@@ -145,7 +145,7 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://linda-artgallery-frontend.vercel.app",
+    "https://linda-artgallery-frontend.vercel.app",
 ]
 
 # -----------------------------
