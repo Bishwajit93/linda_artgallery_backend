@@ -1,6 +1,6 @@
 from rest_framework import generics
-from .models import Video
-from .serializers import VideoSerializer
+from ..models import Video
+from ..serializers import VideoSerializer
 
 class VideoListView(generics.ListAPIView):
     """
