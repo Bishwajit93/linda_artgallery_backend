@@ -24,13 +24,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Core security & debug
 # -----------------------------
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-key")
-DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-# When DEBUG=False, provide comma-separated hosts in .env:
-# ALLOWED_HOSTS=your-domain.com,web-production-xxx.up.railway.app
-ALLOWED_HOSTS = (
-    [] if DEBUG else [h for h in os.environ.get("ALLOWED_HOSTS", "").split(",") if h]
-)
+# Normalize DEBUG env var to bool
+DEBUG = str(os.environ.get("DEBUG", "True")).strip().lower() in ("true", "1", "yes", "y", "on")
+
+# Always read ALLOWED_HOSTS from environment
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "").split(",") if h.strip()]
+
+# Local fallback
+if not ALLOWED_HOSTS and DEBUG:
+    ALLOWED_HOSTS = ["*"]  # allow all hosts during local development
+
+
 
 # -----------------------------
 # Applications
