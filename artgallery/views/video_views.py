@@ -10,3 +10,9 @@ class VideoListView(generics.ListAPIView):
     """
     queryset = Video.objects.filter(is_published=True).order_by("order","created_at")
     serializer_class = VideoSerializer
+    
+
+class VideoDetailView(generics.RetrieveAPIView):
+    queryset = Video.Objects.filter(is_published=True)
+    serializer_class = VideoSerializer
+    lookup_field = "id"
