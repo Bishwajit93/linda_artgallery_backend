@@ -1,3 +1,12 @@
-from django.shortcuts import render
+from rest_framework import generics
+from .models import Video
+from .serializers import VideoSerializer
 
-# Create your views here.
+class VideoListView(generics.ListAPIView):
+    """
+    Public endpoint for the hero/gallery to read videos.
+    Sorted by 'order' (ascending) then '-created_at'.
+    Only published videos are returned.
+    """
+    queryset = Video.objects.filter(is_published=True).order_by("order","created_at")
+    serializer_class = VideoSerializer
