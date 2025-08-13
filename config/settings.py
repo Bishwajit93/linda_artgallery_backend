@@ -142,11 +142,19 @@ REST_FRAMEWORK = {
 # -----------------------------
 # CORS (adjust for your Next.js domains)
 # -----------------------------
+# CORS settings
 CORS_ALLOW_ALL_ORIGINS = False
+
+# Load allowed origins from environment (comma-separated)
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://linda-artgallery-frontend.vercel.app",
+    o.strip() for o in os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",") if o.strip()
 ]
+
+# Fallback for local dev if not set
+if not CORS_ALLOWED_ORIGINS and DEBUG:
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+    ]
 
 # -----------------------------
 # Default PK
