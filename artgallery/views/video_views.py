@@ -1,6 +1,10 @@
+## views/video_views.py
+
 from rest_framework import generics
-from ..models import Video
 from ..serializers import VideoSerializer
+from ..models import Video
+
+
 
 class VideoListView(generics.ListAPIView):
     """
@@ -8,7 +12,7 @@ class VideoListView(generics.ListAPIView):
     Sorted by 'order' (ascending) then '-created_at'.
     Only published videos are returned.
     """
-    queryset = Video.objects.filter(is_published=True).order_by("order","created_at")
+    queryset = Video.objects.filter(is_published=True).order_by("order", "-created_at")
     serializer_class = VideoSerializer
     
 
