@@ -21,8 +21,20 @@ class VideoSerializer(serializers.ModelSerializer):
 
     def get_file_url(self, obj):
         req = self.context.get("request")
-        return req.build_absolute_uri(obj.file.url) if obj.file else None
+        if obj.file and req:
+            url = req.build_absolute_uri(obj.file.url)
+            # Force HTTPS for production
+            if url.startswith("http://"):
+                url = url.replace("http://", "https://")
+            return url
+        return None
 
     def get_poster_url(self, obj):
         req = self.context.get("request")
-        return req.build_absolute_uri(obj.poster.url) if obj.poster else None
+        if obj.poster and req:
+            url = req.build_absolute_uri(obj.poster.url)
+            if url.startswith("http://"):
+                url = url.replace("http://", "https://")
+            return url
+        return None
+
