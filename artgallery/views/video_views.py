@@ -13,6 +13,6 @@ class VideoListView(generics.ListAPIView):
     
 
 class VideoDetailView(generics.RetrieveAPIView):
-    queryset = Video.Objects.filter(is_published=True)
+    queryset = Video.objects.filter(is_published=True)
     serializer_class = VideoSerializer
     lookup_field = "id"
