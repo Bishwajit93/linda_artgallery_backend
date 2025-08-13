@@ -25,15 +25,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -----------------------------
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-key")
 
-# Normalize DEBUG env var to bool
+# Normalize DEBUG env var to boolean
 DEBUG = str(os.environ.get("DEBUG", "True")).strip().lower() in ("true", "1", "yes", "y", "on")
 
 # Always read ALLOWED_HOSTS from environment
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "").split(",") if h.strip()]
 
-# Local fallback
+# Local fallback if not set
 if not ALLOWED_HOSTS and DEBUG:
-    ALLOWED_HOSTS = ["*"]  # allow all hosts during local development
+    ALLOWED_HOSTS = ["*"]  # allow all hosts for local dev
+
 
 
 
@@ -145,21 +146,18 @@ REST_FRAMEWORK = {
 }
 
 # -----------------------------
-# CORS (adjust for your Next.js domains)
-# -----------------------------
 # CORS settings
+# -----------------------------
 CORS_ALLOW_ALL_ORIGINS = False
 
-# Load allowed origins from environment (comma-separated)
+# Read allowed origins from environment (comma-separated)
 CORS_ALLOWED_ORIGINS = [
     o.strip() for o in os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",") if o.strip()
 ]
 
-# Fallback for local dev if not set
+# Local fallback if not set
 if not CORS_ALLOWED_ORIGINS and DEBUG:
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000",
-    ]
+    CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
 # -----------------------------
 # Default PK
