@@ -7,7 +7,7 @@ import os
 import dj_database_url
 
 # -----------------------------
-# .env loading (local only)
+# Load .env (local only)
 # -----------------------------
 try:
     from dotenv import load_dotenv
@@ -24,19 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Core security & debug
 # -----------------------------
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-key")
-
-# Normalize DEBUG env var to boolean
 DEBUG = str(os.environ.get("DEBUG", "True")).strip().lower() in ("true", "1", "yes", "y", "on")
 
-# Always read ALLOWED_HOSTS from environment
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "").split(",") if h.strip()]
-
-# Local fallback if not set
 if not ALLOWED_HOSTS and DEBUG:
-    ALLOWED_HOSTS = ["*"]  # allow all hosts for local dev
-
-
-
+    ALLOWED_HOSTS = ["*"]
 
 # -----------------------------
 # Applications
@@ -63,7 +55,7 @@ INSTALLED_APPS = [
 # Middleware
 # -----------------------------
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # keep first-ish
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -73,9 +65,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# -----------------------------
-# URLs & WSGI
-# -----------------------------
 ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
@@ -96,11 +85,9 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # -----------------------------
-# Database (local Postgres via .env, Railway in prod)
+# Database
 # -----------------------------
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
-
-# If URL points to localhost, disable SSL; otherwise enable (Railway/hosted)
 ssl_require = not ("localhost" in DATABASE_URL or "127.0.0.1" in DATABASE_URL)
 
 DATABASES = {
@@ -133,13 +120,13 @@ USE_TZ = True
 # Static & Media
 # -----------------------------
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"  # for collectstatic in prod
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"         # uploads (e.g., posters, videos)
+MEDIA_ROOT = BASE_DIR / "media"
 
 # -----------------------------
-# DRF (minimal)
+# DRF
 # -----------------------------
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
@@ -148,16 +135,12 @@ REST_FRAMEWORK = {
 }
 
 # -----------------------------
-# CORS settings
+# CORS
 # -----------------------------
 CORS_ALLOW_ALL_ORIGINS = False
-
-# Read allowed origins from environment (comma-separated)
 CORS_ALLOWED_ORIGINS = [
     o.strip() for o in os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",") if o.strip()
 ]
-
-# Local fallback if not set
 if not CORS_ALLOWED_ORIGINS and DEBUG:
     CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
@@ -167,7 +150,7 @@ if not CORS_ALLOWED_ORIGINS and DEBUG:
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # -----------------------------
-# Optional tighter security when DEBUG=False
+# Production Security
 # -----------------------------
 if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
@@ -175,7 +158,6 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     X_FRAME_OPTIONS = "DENY"
-
 
 # -----------------------------
 # Cloudinary Storage
@@ -186,5 +168,10 @@ CLOUDINARY_STORAGE = {
     "API_SECRET": os.environ.get("CLOUD_API_SECRET"),
 }
 
-# Store uploaded media on Cloudinary
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
+# -----------------------------
+# Fallback for libraries needing CLOUDINARY_URL
+# -----------------------------
+if os.environ.get("CLOUDINARY_URL"):
+    os.environ["CLOUDINARY_URL"] = os.environ["CLOUDINARY_URL"]
