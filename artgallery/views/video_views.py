@@ -1,36 +1,50 @@
-## views/video_views.py
-
 from rest_framework import generics, permissions, parsers, views, response, status
 from ..serializers import VideoSerializer
 from ..models import Video
 
+
 class VideoListView(generics.ListAPIView):
     queryset = Video.objects.filter(is_published=True).order_by("order", "-created_at")
     serializer_class = VideoSerializer
+
 
 class VideoDetailView(generics.RetrieveAPIView):
     queryset = Video.objects.filter(is_published=True)
     serializer_class = VideoSerializer
     lookup_field = "id"
 
+
 class VideoCreateView(generics.CreateAPIView):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny]  # change to IsAuthenticated later
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
 
 class VideoUpdateView(generics.UpdateAPIView):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny]  # change to IsAuthenticated later
     lookup_field = "id"
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
 
 class VideoDeleteView(generics.DestroyAPIView):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny]  # change to IsAuthenticated later
     lookup_field = "id"
+
 
 class VideoReorderView(views.APIView):
     """
@@ -44,11 +58,10 @@ class VideoReorderView(views.APIView):
         if not isinstance(items, list):
             return response.Response({"detail": "orders must be a list"}, status=400)
 
-        # bulk update
         to_update = []
         for item in items:
             vid_id = item.get("id")
-            order  = item.get("order")
+            order = item.get("order")
             if vid_id is None or order is None:
                 continue
             try:
@@ -60,6 +73,7 @@ class VideoReorderView(views.APIView):
         if to_update:
             Video.objects.bulk_update(to_update, ["order"])
         return response.Response({"updated": len(to_update)}, status=status.HTTP_200_OK)
+
 
 class VideoPublishToggleView(views.APIView):
     """

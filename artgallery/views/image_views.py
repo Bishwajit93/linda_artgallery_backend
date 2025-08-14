@@ -1,36 +1,50 @@
-## views/image_views.py
-
 from rest_framework import generics, permissions, parsers, views, response, status
 from ..models import Image
 from ..serializers import ImageSerializer
 
+
 class ImageListView(generics.ListAPIView):
     queryset = Image.objects.filter(is_published=True).order_by("order", "-created_at")
     serializer_class = ImageSerializer
+
 
 class ImageDetailView(generics.RetrieveAPIView):
     queryset = Image.objects.filter(is_published=True)
     serializer_class = ImageSerializer
     lookup_field = "id"
 
+
 class ImageCreateView(generics.CreateAPIView):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny]  # change to IsAuthenticated later
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
 
 class ImageUpdateView(generics.UpdateAPIView):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny]  # change to IsAuthenticated later
     lookup_field = "id"
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
 
 class ImageDeleteView(generics.DestroyAPIView):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny]  # change to IsAuthenticated later
     lookup_field = "id"
+
 
 class ImageReorderView(views.APIView):
     """
@@ -47,7 +61,7 @@ class ImageReorderView(views.APIView):
         to_update = []
         for item in items:
             img_id = item.get("id")
-            order  = item.get("order")
+            order = item.get("order")
             if img_id is None or order is None:
                 continue
             try:
@@ -59,6 +73,7 @@ class ImageReorderView(views.APIView):
         if to_update:
             Image.objects.bulk_update(to_update, ["order"])
         return response.Response({"updated": len(to_update)}, status=status.HTTP_200_OK)
+
 
 class ImagePublishToggleView(views.APIView):
     """

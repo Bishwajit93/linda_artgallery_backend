@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     # third-party
+    "cloudinary",
+    "cloudinary_storage",
     "rest_framework",
     "corsheaders",
 
@@ -173,3 +175,16 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     X_FRAME_OPTIONS = "DENY"
+
+
+# -----------------------------
+# Cloudinary Storage
+# -----------------------------
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": os.environ.get("CLOUD_NAME"),
+    "API_KEY": os.environ.get("CLOUD_API_KEY"),
+    "API_SECRET": os.environ.get("CLOUD_API_SECRET"),
+}
+
+# Store uploaded media on Cloudinary
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
