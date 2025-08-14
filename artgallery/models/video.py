@@ -4,8 +4,22 @@ from cloudinary.models import CloudinaryField
 class Video(models.Model):
     title = models.CharField(max_length=120)
     description = models.TextField(blank=True)
-    file = CloudinaryField("video", folder="videos/artworks")  # Cloudinary video
-    poster = CloudinaryField("image", folder="videos/posters", blank=True, null=True)  # Optional cover
+
+    # ✅ Force Cloudinary to treat this as a video
+    file = CloudinaryField(
+        "video",
+        folder="videos/artworks",
+        resource_type="video"
+    )
+
+    # ✅ Poster is still an image
+    poster = CloudinaryField(
+        "image",
+        folder="videos/posters",
+        blank=True,
+        null=True
+    )
+
     size_label = models.CharField(max_length=32, blank=True)
     recorded_at = models.DateField(blank=True, null=True)
     duration_seconds = models.PositiveIntegerField(blank=True, null=True)
