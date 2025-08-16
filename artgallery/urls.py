@@ -6,6 +6,7 @@ urlpatterns = [
     path("videos/", video_views.VideoListView.as_view(), name="video-list"),
     path("videos/<int:id>/", video_views.VideoDetailView.as_view(), name="video-detail"),
     path("videos/upload/", video_views.VideoCreateView.as_view(), name="video-upload"),
+    path("videos/upload-signature/", video_views.VideoUploadSignatureView.as_view(), name="video-upload-signature"),
     path("videos/<int:id>/update/", video_views.VideoUpdateView.as_view(), name="video-update"),
     path("videos/<int:id>/delete/", video_views.VideoDeleteView.as_view(), name="video-delete"),
     path("videos/reorder/", video_views.VideoReorderView.as_view(), name="video-reorder"),

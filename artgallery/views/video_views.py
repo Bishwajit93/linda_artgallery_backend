@@ -1,7 +1,9 @@
 from rest_framework import generics, permissions, parsers, views, response, status
 from ..serializers import VideoSerializer
 from ..models import Video
-
+import cloudinary.uploader
+import cloudinary.utils
+from django.conf import settings
 
 class VideoListView(generics.ListAPIView):
     queryset = Video.objects.filter(is_published=True).order_by("order", "-created_at")
@@ -93,3 +95,34 @@ class VideoPublishToggleView(views.APIView):
             v.save(update_fields=["is_published"])
             return response.Response({"id": v.id, "is_published": v.is_published})
         return response.Response({"detail": "is_published must be boolean"}, status=400)
+
+
+class VideoUploadSignatureView(views.APIView):
+    """
+    GET /api/videos/upload-signature/
+    Returns signature + params so frontend can upload directly to Cloudinary
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        # Expiration in ~1 minute
+        timestamp = cloudinary.utils.now_ts()
+
+        params = {
+            "timestamp": timestamp,
+            "folder": "videos/artworks",  # same as your model
+            "resource_type": "video",
+        }
+
+        signature = cloudinary.utils.api_sign_request(
+            params_to_sign=params,
+            api_secret=settings.CLOUDINARY_API_SECRET,
+        )
+
+        return response.Response({
+            "cloud_name": settings.CLOUDINARY_CLOUD_NAME,
+            "api_key": settings.CLOUDINARY_API_KEY,
+            "timestamp": timestamp,
+            "folder": params["folder"],
+            "signature": signature,
+        })
