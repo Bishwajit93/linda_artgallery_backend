@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import video_views, image_views
-
+from .views.cloudinary_views import cloudinary_signature
 urlpatterns = [
     # Videos
     path("videos/", video_views.VideoListView.as_view(), name="video-list"),
@@ -21,4 +21,6 @@ urlpatterns = [
     path("images/reorder/", image_views.ImageReorderView.as_view(), name="image-reorder"),
     path("images/<int:id>/publish/", image_views.ImagePublishToggleView.as_view(), name="image-publish"),
     
+    # Cloudinary
+    path("cloudinary/signature/", cloudinary_signature, name="cloudinary-signature"),
 ]
