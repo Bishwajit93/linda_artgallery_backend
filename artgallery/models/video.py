@@ -1,34 +1,21 @@
 from django.db import models
-from cloudinary.models import CloudinaryField
 
 class Video(models.Model):
-    title = models.CharField(max_length=120)
-    description = models.TextField(blank=True)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
 
-    # ✅ Force Cloudinary to treat this as a video
-    file = CloudinaryField(
-        "video",
-        folder="videos/artworks",
-        resource_type="video"
-    )
+    # Cloudinary URLs (store only URLs)
+    file_url = models.URLField(max_length=500, blank=True, null=True)
+    poster_url = models.URLField(max_length=500, blank=True, null=True)
 
-    # ✅ Poster is still an image
-    poster = CloudinaryField(
-        "image",
-        folder="videos/posters",
-        blank=True,
-        null=True
-    )
+    size_label = models.CharField(max_length=50, blank=True, null=True)
+    recorded_at = models.DateTimeField(blank=True, null=True)
+    duration_seconds = models.IntegerField(blank=True, null=True)
 
-    size_label = models.CharField(max_length=32, blank=True)
-    recorded_at = models.DateField(blank=True, null=True)
-    duration_seconds = models.PositiveIntegerField(blank=True, null=True)
-    order = models.PositiveSmallIntegerField(default=0)
+    order = models.PositiveIntegerField(default=0)
     is_published = models.BooleanField(default=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ["order", "-created_at"]
-
     def __str__(self):
-        return self.title
+        return self.title or f"Video {self.id}"

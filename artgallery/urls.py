@@ -20,4 +20,5 @@ urlpatterns = [
     path("images/<int:id>/delete/", image_views.ImageDeleteView.as_view(), name="image-delete"),
     path("images/reorder/", image_views.ImageReorderView.as_view(), name="image-reorder"),
     path("images/<int:id>/publish/", image_views.ImagePublishToggleView.as_view(), name="image-publish"),
+    
 ]

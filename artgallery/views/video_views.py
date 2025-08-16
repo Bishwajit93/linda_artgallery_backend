@@ -1,7 +1,6 @@
 from rest_framework import generics, permissions, parsers, views, response, status
 from ..serializers import VideoSerializer
 from ..models import Video
-import cloudinary.uploader
 import cloudinary.utils
 from django.conf import settings
 
@@ -17,42 +16,39 @@ class VideoDetailView(generics.RetrieveAPIView):
 
 
 class VideoCreateView(generics.CreateAPIView):
+    """
+    POST /api/videos/upload/
+    {
+      "title": "My Video",
+      "description": "Optional description",
+      "file_url": "https://res.cloudinary.com/.../video.mp4",
+      "poster_url": "https://res.cloudinary.com/.../thumb.jpg",
+      "order": 0,
+      "is_published": true
+    }
+    """
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
-    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
-    permission_classes = [permissions.AllowAny]  # change to IsAuthenticated later
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["request"] = self.request
-        return context
+    permission_classes = [permissions.AllowAny]
+    parser_classes = [parsers.JSONParser]
 
 
 class VideoUpdateView(generics.UpdateAPIView):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
-    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
-    permission_classes = [permissions.AllowAny]  # change to IsAuthenticated later
+    parser_classes = [parsers.JSONParser]
+    permission_classes = [permissions.AllowAny]
     lookup_field = "id"
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["request"] = self.request
-        return context
 
 
 class VideoDeleteView(generics.DestroyAPIView):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
-    permission_classes = [permissions.AllowAny]  # change to IsAuthenticated later
+    permission_classes = [permissions.AllowAny]
     lookup_field = "id"
 
 
 class VideoReorderView(views.APIView):
-    """
-    PATCH /api/videos/reorder/
-    body: { "orders": [ {"id": 12, "order": 1}, {"id": 7, "order": 2}, ... ] }
-    """
     permission_classes = [permissions.AllowAny]
 
     def patch(self, request):
@@ -78,10 +74,6 @@ class VideoReorderView(views.APIView):
 
 
 class VideoPublishToggleView(views.APIView):
-    """
-    PATCH /api/videos/<id>/publish/
-    body: { "is_published": true/false }
-    """
     permission_classes = [permissions.AllowAny]
 
     def patch(self, request, id):
@@ -105,20 +97,16 @@ class VideoUploadSignatureView(views.APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        # Expiration in ~1 minute
         timestamp = cloudinary.utils.now_ts()
-
         params = {
             "timestamp": timestamp,
-            "folder": "videos/artworks",  # same as your model
+            "folder": "videos/artworks",
             "resource_type": "video",
         }
-
         signature = cloudinary.utils.api_sign_request(
             params_to_sign=params,
             api_secret=settings.CLOUDINARY_API_SECRET,
         )
-
         return response.Response({
             "cloud_name": settings.CLOUDINARY_CLOUD_NAME,
             "api_key": settings.CLOUDINARY_API_KEY,
