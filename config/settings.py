@@ -144,6 +144,8 @@ CORS_ALLOWED_ORIGINS = [
 if not CORS_ALLOWED_ORIGINS and DEBUG:
     CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
+CORS_ALLOW_CREDENTIALS = True 
+
 # -----------------------------
 # Default PK
 # -----------------------------
