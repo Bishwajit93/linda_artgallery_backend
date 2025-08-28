@@ -8,13 +8,11 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- Environment loading ---
-# Pick which .env to read (falls back to real env if file not present)
-ENV_FILE = os.getenv("ENV_FILE", ".env.dev")
+ENV_FILE = os.getenv("ENV_FILE", ".env")  # single .env by default
 env_path = BASE_DIR / ENV_FILE
 if env_path.exists():
     load_dotenv(env_path)
 else:
-    # No file locally (e.g., Railway) — use panel env vars directly
     load_dotenv()  # harmless if nothing present
 
 # --- Core ---
@@ -22,18 +20,15 @@ SECRET_KEY = os.getenv("SECRET_KEY", "CHANGE-ME-IN-PROD")
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = [
-    h.strip()
-    for h in os.getenv("ALLOWED_HOSTS", "").split(",")
-    if h.strip()
+    h.strip() for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h.strip()
 ] or ["127.0.0.1", "localhost"]
 
-# CSRF / CORS (set these in prod)
+# CSRF / CORS (empty is fine locally; set in prod env)
 CSRF_TRUSTED_ORIGINS = [
-    o.strip()
-    for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
-    if o.strip()
+    o.strip() for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
 ]
 
+# Local dev defaults + extend with env-provided
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -54,16 +49,14 @@ INSTALLED_APPS = [
     "rest_framework",
     "cloudinary",
     "corsheaders",
-    "whitenoise",              # ← add for serving static in prod
 
     "artgallery.apps.ArtgalleryConfig",
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # ← after SecurityMiddleware
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # serve static in prod
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -92,14 +85,22 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # --- Database ---
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),
-        conn_max_age=600,
-    )
-}
+# Try DATABASE_URL first; fall back to local SQLite for dev.
+db_from_env = dj_database_url.config(
+    default=os.getenv("DATABASE_URL"),
+    conn_max_age=600,
+)
+if db_from_env:
+    DATABASES = {"default": db_from_env}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
-# --- Auth validators (unchanged) ---
+# --- Auth validators ---
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -112,9 +113,9 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# --- Static files (for admin assets) ---
+# --- Static files ---
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"   # where collectstatic dumps files
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -150,15 +151,12 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# If behind a proxy on Railway, trust X-Forwarded-Proto for HTTPS
+# --- Proxy/HTTPS ---
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 
-# -------------------------------------------------
-# Logging
-# -------------------------------------------------
+# --- Logging ---
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
