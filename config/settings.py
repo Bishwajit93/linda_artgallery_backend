@@ -19,24 +19,31 @@ else:
 SECRET_KEY = os.getenv("SECRET_KEY", "CHANGE-ME-IN-PROD")
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
+# --- Hosts ---
 ALLOWED_HOSTS = [
+    "lindaartgallerybackend-production.up.railway.app",
+    "linda-artgallery-frontend.vercel.app",
+    "127.0.0.1",
+    "localhost",
+] + [
     h.strip() for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h.strip()
-] or ["127.0.0.1", "localhost"]
+]
 
-# CSRF / CORS (empty is fine locally; set in prod env)
+# --- CSRF / CORS ---
 CSRF_TRUSTED_ORIGINS = [
+    "https://lindaartgallerybackend-production.up.railway.app",
+    "https://linda-artgallery-frontend.vercel.app",
+] + [
     o.strip() for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
 ]
 
-# Local dev defaults + extend with env-provided
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-]
-extra_cors = [
+    "https://linda-artgallery-frontend.vercel.app",
+] + [
     o.strip() for o in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if o.strip()
 ]
-CORS_ALLOWED_ORIGINS += [o for o in extra_cors if o not in CORS_ALLOWED_ORIGINS]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -129,6 +136,8 @@ cloudinary.config(
     cloudinary_url=os.getenv("CLOUDINARY_URL"),
     secure=True,
 )
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 # --- DRF / JWT ---
 REST_FRAMEWORK = {
