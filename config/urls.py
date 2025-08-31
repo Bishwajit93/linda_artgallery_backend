@@ -5,6 +5,7 @@ from artgallery.views import (
     PublishedImageViewSet, AdminImageViewSet,
     PublishedVideoViewSet, AdminVideoViewSet,
 )
+from artgallery.views import ping
 from artgallery.views.upload_sign import sign_upload
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -18,6 +19,7 @@ router.register(r"admin/videos", AdminVideoViewSet, basename="admin-videos")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("ping/", ping),   # ✅ health check
     path("api/", include(router.urls)),
     path("api/uploads/sign/", sign_upload),
     
