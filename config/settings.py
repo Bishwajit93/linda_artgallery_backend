@@ -132,12 +132,13 @@ STORAGES = {
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # --- Cloudinary ---
-cloudinary.config(
-    cloudinary_url=os.getenv("CLOUDINARY_URL"),
-    secure=True,
-)
+import cloudinary
+
+# Cloudinary will automatically pick up CLOUDINARY_URL from the environment
+cloudinary.config(secure=True)
 
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
 
 
 
