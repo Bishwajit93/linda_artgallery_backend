@@ -55,6 +55,7 @@ INSTALLED_APPS = [
 
     "rest_framework",
     "cloudinary",
+    "cloudinary_storage",  # ✅ needed for Media storage
     "corsheaders",
 
     "artgallery.apps.ArtgalleryConfig",
@@ -92,7 +93,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # --- Database ---
-# Try DATABASE_URL first; fall back to local SQLite for dev.
 db_from_env = dj_database_url.config(
     default=os.getenv("DATABASE_URL"),
     conn_max_age=600,
@@ -133,7 +133,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # --- Cloudinary ---
 cloudinary.config(
-    cloudinary_url=os.getenv("CLOUDINARY_URL"),
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
     secure=True,
 )
 
