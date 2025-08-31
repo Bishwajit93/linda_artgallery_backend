@@ -132,15 +132,22 @@ STORAGES = {
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # --- Cloudinary ---
-import cloudinary
+print("---- DEBUG CLOUDINARY ----")
+print("CLOUDINARY_URL =", os.getenv("CLOUDINARY_URL"))
+print("CLOUD_NAME =", os.getenv("CLOUDINARY_CLOUD_NAME"))
+print("API_KEY =", os.getenv("CLOUDINARY_API_KEY"))
+print("API_SECRET =", os.getenv("CLOUDINARY_API_SECRET"))
+print("---- END DEBUG ----")
 
-# Cloudinary will automatically pick up CLOUDINARY_URL from the environment
-cloudinary.config(secure=True)
+# ✅ Cloudinary will use CLOUDINARY_URL if available
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True,
+)
 
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-
-
-
 
 # --- DRF / JWT ---
 REST_FRAMEWORK = {
