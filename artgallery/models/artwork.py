@@ -1,9 +1,9 @@
+# artgallery/models/artwork.py
 from django.db import models
-
+import os
 
 # --------------------------------------------------
 # Artwork model
-# Represents a single artwork entry
 # --------------------------------------------------
 class Artwork(models.Model):
     CATEGORY_CHOICES = [
@@ -24,16 +24,23 @@ class Artwork(models.Model):
 
 # --------------------------------------------------
 # ArtworkImage model
-# Stores multiple images for an artwork
 # --------------------------------------------------
+def artwork_image_upload_to(instance, filename):
+    """
+    Store images inside 'artworks/images/' while keeping original filename.
+    """
+    return os.path.join("artworks/images", filename)
+
+
 class ArtworkImage(models.Model):
     artwork = models.ForeignKey(Artwork, related_name="images", on_delete=models.CASCADE)
     image = models.ImageField(
-        upload_to="artworks/images/",   # Bunny will store inside this folder
+        upload_to=artwork_image_upload_to,
+        storage="artgallery.storage_backends.BunnyStorage",  # ✅ string path, serializable
     )
-    height_cm = models.DecimalField(max_digits=6, decimal_places=2)   # manually entered by Linda
-    width_cm = models.DecimalField(max_digits=6, decimal_places=2)    # manually entered by Linda
-    order = models.PositiveSmallIntegerField(default=0)               # allows sorting
+    height_cm = models.DecimalField(max_digits=6, decimal_places=2)
+    width_cm = models.DecimalField(max_digits=6, decimal_places=2)
+    order = models.PositiveSmallIntegerField(default=0)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -42,12 +49,19 @@ class ArtworkImage(models.Model):
 
 # --------------------------------------------------
 # ArtworkVideo model
-# Stores optional videos for an artwork (max 3)
 # --------------------------------------------------
+def artwork_video_upload_to(instance, filename):
+    """
+    Store videos inside 'artworks/videos/' while keeping original filename.
+    """
+    return os.path.join("artworks/videos", filename)
+
+
 class ArtworkVideo(models.Model):
     artwork = models.ForeignKey(Artwork, related_name="videos", on_delete=models.CASCADE)
     video = models.FileField(
-        upload_to="artworks/videos/",   # Bunny will store inside this folder
+        upload_to=artwork_video_upload_to,
+        storage="artgallery.storage_backends.BunnyStorage",  # ✅ string path, serializable
     )
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
