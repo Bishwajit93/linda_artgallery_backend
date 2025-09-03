@@ -1,7 +1,5 @@
 from rest_framework import serializers
 from ..models.herovideo import HeroVideo
-from django.conf import settings
-
 
 # --------------------------------------------------
 # HeroVideo Serializer
@@ -23,6 +21,5 @@ class HeroVideoSerializer(serializers.ModelSerializer):
 
     def get_video_url(self, obj):
         if obj.video:
-            # Always use Bunny CDN URL
-            return f"{settings.MEDIA_URL}{obj.video.name}"
+            return obj.video.url   # ✅ BunnyStorage provides correct CDN URL
         return None
