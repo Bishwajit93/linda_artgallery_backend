@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+
 from artgallery.models.herovideo import HeroVideo
 from artgallery.serializers.herovideo_serializers import HeroVideoSerializer
 
@@ -8,12 +9,20 @@ from artgallery.serializers.herovideo_serializers import HeroVideoSerializer
 # HeroVideo ViewSet
 # --------------------------------------------------
 class HeroVideoViewSet(viewsets.ModelViewSet):
+    """
+    API endpoints for Hero Videos.
+    - List: GET /api/hero-videos/
+    - Retrieve: GET /api/hero-videos/{id}/
+    - Create: POST /api/hero-videos/
+    - Update: PUT/PATCH /api/hero-videos/{id}/
+    - Delete: DELETE /api/hero-videos/{id}/
+    """
     serializer_class = HeroVideoSerializer
 
     def get_queryset(self):
         """
-        If staff → return all hero videos.
-        Otherwise → return only active ones.
+        Staff users → return all videos.
+        Normal users → return only active ones.
         """
         qs = HeroVideo.objects.all().order_by("order", "-created_at")
         if not self.request.user.is_staff:
@@ -22,14 +31,7 @@ class HeroVideoViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """
-        Before saving:
-        - Check if there are already 5 active videos.
-        - If yes → block creation.
+        Create a new HeroVideo.
+        (✅ Removed the "max 5" restriction for now.)
         """
-        # active_count = HeroVideo.objects.filter(is_active=True).count()
-        # if active_count >= 5:
-        #     return Response(
-        #         {"error": "Maximum of 5 active hero videos allowed."},
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
         return super().create(request, *args, **kwargs)
