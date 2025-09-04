@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from ..models.artwork import Artwork, ArtworkImage, ArtworkVideo
+from django.conf import settings
+
 
 # --------------------------------------------------
 # ArtworkImage Serializer
@@ -12,7 +14,10 @@ class ArtworkImageSerializer(serializers.ModelSerializer):
         fields = ["id", "image_url", "height_cm", "width_cm", "order", "uploaded_at"]
 
     def get_image_url(self, obj):
-        return obj.image.url if obj.image else None  # ✅ BunnyStorage.url()
+        if obj.image:
+            # Always use Bunny CDN URL
+            return f"{settings.MEDIA_URL}{obj.image.name}"
+        return None
 
 
 # --------------------------------------------------
@@ -26,7 +31,10 @@ class ArtworkVideoSerializer(serializers.ModelSerializer):
         fields = ["id", "video_url", "uploaded_at"]
 
     def get_video_url(self, obj):
-        return obj.video.url if obj.video else None  # ✅ BunnyStorage.url()
+        if obj.video:
+            # Always use Bunny CDN URL
+            return f"{settings.MEDIA_URL}{obj.video.name}"
+        return None
 
 
 # --------------------------------------------------
