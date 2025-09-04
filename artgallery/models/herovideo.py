@@ -8,10 +8,9 @@ class HeroVideo(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
-    # ✅ Use dotted path so migrations work, Django will load BunnyStorage at runtime
     video = models.FileField(
         upload_to=hero_video_upload_to,
-        storage="artgallery.storage_backends.BunnyStorage",
+        storage="artgallery.storage_backends.BunnyStorage",  # ✅ use string path
     )
 
     order = models.PositiveSmallIntegerField(default=0)

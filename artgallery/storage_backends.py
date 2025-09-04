@@ -1,6 +1,8 @@
+import os
 import requests
 from django.core.files.storage import Storage
 from django.conf import settings
+
 
 class BunnyStorage(Storage):
     """
@@ -8,14 +10,19 @@ class BunnyStorage(Storage):
     """
 
     def _save(self, name, content):
+        # 🔎 DEBUG LINE
+        print("🚀 Saving to Bunny:", name)
+
         upload_url = f"{settings.BUNNY_ENDPOINT}/{settings.BUNNY_STORAGE_NAME}/{name}"
         response = requests.put(
             upload_url,
             data=content.read(),
             headers={"AccessKey": settings.BUNNY_STORAGE_KEY},
         )
+
         if response.status_code not in [201, 202]:
             raise Exception(f"❌ Bunny upload failed: {response.text}")
+
         return name
 
     def exists(self, name):
