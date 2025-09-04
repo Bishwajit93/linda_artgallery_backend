@@ -52,9 +52,9 @@ INSTALLED_APPS = [
 
 # --- Middleware ---
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",   # ⬅️ must be first
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # serve static in prod
-    "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -62,6 +62,15 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# --- CORS ---
+CORS_ALLOW_ALL_ORIGINS = True  # ⬅️ TEMPORARY: allow all during testing
+# Later replace with:
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "https://linda-artgallery-frontend.vercel.app",
+# ]
+
 
 ROOT_URLCONF = "config.urls"
 
@@ -116,8 +125,6 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-
-MEDIA_URL = os.getenv("BUNNY_CDN_URL", "/media/")
 
 
 # CDN URL (Pull Zone) for serving uploaded media
