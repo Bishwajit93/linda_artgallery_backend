@@ -1,9 +1,6 @@
 from rest_framework import serializers
 from ..models.herovideo import HeroVideo
 
-# --------------------------------------------------
-# HeroVideo Serializer
-# --------------------------------------------------
 class HeroVideoSerializer(serializers.ModelSerializer):
     video_url = serializers.SerializerMethodField()
 
@@ -21,5 +18,5 @@ class HeroVideoSerializer(serializers.ModelSerializer):
 
     def get_video_url(self, obj):
         if obj.video:
-            return obj.video.url   # ✅ BunnyStorage provides correct CDN URL
+            return obj.video.url  # ✅ BunnyStorage.url() will return CDN link
         return None

@@ -12,9 +12,7 @@ class ArtworkImageSerializer(serializers.ModelSerializer):
         fields = ["id", "image_url", "height_cm", "width_cm", "order", "uploaded_at"]
 
     def get_image_url(self, obj):
-        if obj.image:
-            return obj.image.url   # ✅ BunnyStorage provides correct CDN URL
-        return None
+        return obj.image.url if obj.image else None  # ✅ BunnyStorage.url()
 
 
 # --------------------------------------------------
@@ -28,9 +26,7 @@ class ArtworkVideoSerializer(serializers.ModelSerializer):
         fields = ["id", "video_url", "uploaded_at"]
 
     def get_video_url(self, obj):
-        if obj.video:
-            return obj.video.url   # ✅ BunnyStorage provides correct CDN URL
-        return None
+        return obj.video.url if obj.video else None  # ✅ BunnyStorage.url()
 
 
 # --------------------------------------------------

@@ -1,16 +1,14 @@
 from django.db import models
 import os
 
-
 def hero_video_upload_to(instance, filename):
     return os.path.join("herovideos", filename)
-
 
 class HeroVideo(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
-    # ✅ Use dotted path string, not BunnyStorage()
+    # ✅ Use dotted path so migrations work, Django will load BunnyStorage at runtime
     video = models.FileField(
         upload_to=hero_video_upload_to,
         storage="artgallery.storage_backends.BunnyStorage",

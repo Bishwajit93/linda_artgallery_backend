@@ -1,4 +1,3 @@
-# artgallery/models/artwork.py
 from django.db import models
 import os
 
@@ -26,17 +25,13 @@ class Artwork(models.Model):
 # ArtworkImage model
 # --------------------------------------------------
 def artwork_image_upload_to(instance, filename):
-    """
-    Store images inside 'artworks/images/' while keeping original filename.
-    """
     return os.path.join("artworks/images", filename)
-
 
 class ArtworkImage(models.Model):
     artwork = models.ForeignKey(Artwork, related_name="images", on_delete=models.CASCADE)
     image = models.ImageField(
         upload_to=artwork_image_upload_to,
-        storage="artgallery.storage_backends.BunnyStorage",  # ✅ string path, serializable
+        storage="artgallery.storage_backends.BunnyStorage",  # ✅ Bunny
     )
     height_cm = models.DecimalField(max_digits=6, decimal_places=2)
     width_cm = models.DecimalField(max_digits=6, decimal_places=2)
@@ -51,17 +46,13 @@ class ArtworkImage(models.Model):
 # ArtworkVideo model
 # --------------------------------------------------
 def artwork_video_upload_to(instance, filename):
-    """
-    Store videos inside 'artworks/videos/' while keeping original filename.
-    """
     return os.path.join("artworks/videos", filename)
-
 
 class ArtworkVideo(models.Model):
     artwork = models.ForeignKey(Artwork, related_name="videos", on_delete=models.CASCADE)
     video = models.FileField(
         upload_to=artwork_video_upload_to,
-        storage="artgallery.storage_backends.BunnyStorage",  # ✅ string path, serializable
+        storage="artgallery.storage_backends.BunnyStorage",  # ✅ Bunny
     )
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
