@@ -26,10 +26,10 @@ class HeroVideoViewSet(viewsets.ModelViewSet):
         - Check if there are already 5 active videos.
         - If yes → block creation.
         """
-        active_count = HeroVideo.objects.filter(is_active=True).count()
-        if active_count >= 5:
-            return Response(
-                {"error": "Maximum of 5 active hero videos allowed."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # active_count = HeroVideo.objects.filter(is_active=True).count()
+        # if active_count >= 5:
+        #     return Response(
+        #         {"error": "Maximum of 5 active hero videos allowed."},
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
         return super().create(request, *args, **kwargs)
