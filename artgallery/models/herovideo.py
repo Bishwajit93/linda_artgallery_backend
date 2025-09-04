@@ -1,5 +1,7 @@
+# artgallery/models/herovideo.py
 from django.db import models
 import os
+from artgallery.storage_backends import BunnyStorage
 
 def hero_video_upload_to(instance, filename):
     return os.path.join("herovideos", filename)
@@ -10,7 +12,7 @@ class HeroVideo(models.Model):
 
     video = models.FileField(
         upload_to=hero_video_upload_to,
-        storage="artgallery.storage_backends.BunnyStorage",  # ✅ use string path
+        storage=BunnyStorage(),  # ✅ actual storage instance
     )
 
     order = models.PositiveSmallIntegerField(default=0)

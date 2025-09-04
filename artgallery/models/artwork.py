@@ -1,6 +1,6 @@
 from django.db import models
 import os
-
+from artgallery.storage_backends import BunnyStorage
 class Artwork(models.Model):
     CATEGORY_CHOICES = [
         ("highlight", "Highlight"),
@@ -23,7 +23,7 @@ class ArtworkImage(models.Model):
     artwork = models.ForeignKey(Artwork, related_name="images", on_delete=models.CASCADE)
     image = models.ImageField(
         upload_to=artwork_image_upload_to,
-        storage="artgallery.storage_backends.BunnyStorage",  # ✅ string path
+        storage = BunnyStorage(),  # ✅ string path
     )
     height_cm = models.DecimalField(max_digits=6, decimal_places=2)
     width_cm = models.DecimalField(max_digits=6, decimal_places=2)
@@ -40,7 +40,7 @@ class ArtworkVideo(models.Model):
     artwork = models.ForeignKey(Artwork, related_name="videos", on_delete=models.CASCADE)
     video = models.FileField(
         upload_to=artwork_video_upload_to,
-        storage="artgallery.storage_backends.BunnyStorage",  # ✅ string path
+        storage = BunnyStorage(),  # ✅ string path
     )
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
