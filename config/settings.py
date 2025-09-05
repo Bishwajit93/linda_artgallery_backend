@@ -125,6 +125,7 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+DEFAULT_FILE_STORAGE = "artgallery.storage_backends.BunnyStorage"
 
 
 # CDN URL (Pull Zone) for serving uploaded media

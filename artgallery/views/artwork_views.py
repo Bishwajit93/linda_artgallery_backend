@@ -5,14 +5,14 @@ from artgallery.serializers.artwork_serializers import (
     ArtworkImageSerializer,
     ArtworkVideoSerializer,
 )
-
+from rest_framework.parsers import MultiPartParser, FormParser
 
 # --------------------------------------------------
 # Artwork ViewSet
 # --------------------------------------------------
 class ArtworkViewSet(viewsets.ModelViewSet):
     serializer_class = ArtworkSerializer
-
+    parser_classes = [MultiPartParser, FormParser]
     def get_queryset(self):
         """
         If the user is staff (admin panel), return all artworks.
@@ -29,7 +29,7 @@ class ArtworkViewSet(viewsets.ModelViewSet):
 # --------------------------------------------------
 class ArtworkImageViewSet(viewsets.ModelViewSet):
     serializer_class = ArtworkImageSerializer
-
+    parser_classes = [MultiPartParser, FormParser]
     def get_queryset(self):
         """
         If staff → return all images.

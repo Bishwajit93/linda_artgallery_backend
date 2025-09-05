@@ -1,11 +1,7 @@
 from rest_framework import serializers
 from ..models.herovideo import HeroVideo
-from django.conf import settings
 
 
-# --------------------------------------------------
-# HeroVideo Serializer
-# --------------------------------------------------
 class HeroVideoSerializer(serializers.ModelSerializer):
     video_url = serializers.SerializerMethodField()
 
@@ -18,11 +14,11 @@ class HeroVideoSerializer(serializers.ModelSerializer):
             "order",
             "is_active",
             "created_at",
-            "video_url",
+            "video",       # ✅ raw file field (needed for upload)
+            "video_url",   # ✅ Bunny CDN URL
         ]
 
     def get_video_url(self, obj):
-        if obj.video:
-            # Always use Bunny CDN URL
-            return f"{settings.MEDIA_URL}{obj.video.name}"
+        if obj.video and hasattr(obj.video, "url"):
+            return obj.video.url
         return None

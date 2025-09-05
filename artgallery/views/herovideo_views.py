@@ -1,35 +1,22 @@
 from rest_framework import viewsets, status
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from artgallery.models.herovideo import HeroVideo
 from artgallery.serializers.herovideo_serializers import HeroVideoSerializer
 
-
-# --------------------------------------------------
-# HeroVideo ViewSet
-# --------------------------------------------------
 class HeroVideoViewSet(viewsets.ModelViewSet):
     serializer_class = HeroVideoSerializer
-
-    def get_queryset(self):
-        """
-        If staff → return all hero videos.
-        Otherwise → return only active ones.
-        """
-        qs = HeroVideo.objects.all().order_by("order", "-created_at")
-        if not self.request.user.is_staff:
-            qs = qs.filter(is_active=True)
-        return qs
+    queryset = HeroVideo.objects.all().order_by("order", "-created_at")
+    parser_classes = [MultiPartParser, FormParser]  # ✅ handle file uploads
 
     def create(self, request, *args, **kwargs):
-        """
-        Before saving:
-        - Check if there are already 5 active videos.
-        - If yes → block creation.
-        """
-        active_count = HeroVideo.objects.filter(is_active=True).count()
-        if active_count >= 5:
-            return Response(
-                {"error": "Maximum of 5 active hero videos allowed."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        return super().create(request, *args, **kwargs)
+        # Ensure file is passed
+        if "video" not in request.FILES:
+            return Response({"error": "No video file provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
