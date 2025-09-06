@@ -3,6 +3,7 @@ from django.core.files.storage import Storage
 from django.conf import settings
 import requests
 
+
 class BunnyStorage(Storage):
     def _save(self, name, content):
         content.seek(0)  # reset file pointer
@@ -23,7 +24,8 @@ class BunnyStorage(Storage):
         return False  # always overwrite
 
     def url(self, name):
-        base = settings.BUNNY_CDN_URL.rstrip("/")
+        # ✅ Always return playable URL from Pull Zone
+        base = getattr(settings, "BUNNY_PULL_ZONE_URL", settings.BUNNY_CDN_URL).rstrip("/")
         return f"{base}/{name.lstrip('/')}"
 
     def delete(self, name):

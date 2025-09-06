@@ -14,7 +14,7 @@ BUNNY_STORAGE_NAME = os.getenv("BUNNY_STORAGE_NAME")
 BUNNY_STORAGE_KEY = os.getenv("BUNNY_STORAGE_KEY")
 BUNNY_ENDPOINT = os.getenv("BUNNY_ENDPOINT")
 BUNNY_CDN_URL = os.getenv("BUNNY_CDN_URL")
-
+BUNNY_PULL_ZONE_URL = os.getenv("BUNNY_PULL_ZONE_URL")
 
 # --- Core ---
 SECRET_KEY = os.getenv("SECRET_KEY", "change-me")
@@ -129,7 +129,9 @@ DEFAULT_FILE_STORAGE = "artgallery.storage_backends.BunnyStorage"
 
 
 # CDN URL (Pull Zone) for serving uploaded media
-MEDIA_URL = os.getenv("BUNNY_CDN_URL", "/media/")
+# CDN URL (Pull Zone) for serving uploaded media
+# CDN URL (Pull Zone) for serving uploaded media
+MEDIA_URL = os.getenv("BUNNY_PULL_ZONE_URL", os.getenv("BUNNY_CDN_URL", "/media/"))
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
