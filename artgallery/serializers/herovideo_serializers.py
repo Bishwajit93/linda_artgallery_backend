@@ -15,8 +15,10 @@ class HeroVideoSerializer(serializers.ModelSerializer):
             "order",
             "is_active",
             "created_at",
-            "video_url",   # ✅ only return Pull Zone URL
+            "video",       # ✅ include this so uploads are stored!
+            "video_url",   # ✅ transformed Pull Zone URL
         ]
+        read_only_fields = ["video_url"]  # make sure clients don't POST this
 
     def get_video_url(self, obj):
         if obj.video and hasattr(obj.video, "url"):
@@ -25,9 +27,7 @@ class HeroVideoSerializer(serializers.ModelSerializer):
             cdn_url = getattr(settings, "BUNNY_CDN_URL", "")
 
             if pull_zone and cdn_url:
-                # replace anywhere, not only if it "starts with"
                 return storage_url.replace(cdn_url.rstrip("/"), pull_zone.rstrip("/"))
 
             return storage_url
         return None
-
