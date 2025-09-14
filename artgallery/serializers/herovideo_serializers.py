@@ -24,10 +24,10 @@ class HeroVideoSerializer(serializers.ModelSerializer):
             pull_zone = getattr(settings, "BUNNY_PULL_ZONE_URL", None)
             cdn_url = getattr(settings, "BUNNY_CDN_URL", "")
 
-            # ✅ Replace storage CDN with Pull Zone
-            if pull_zone and cdn_url and storage_url.startswith(cdn_url):
+            if pull_zone and cdn_url:
+                # replace anywhere, not only if it "starts with"
                 return storage_url.replace(cdn_url.rstrip("/"), pull_zone.rstrip("/"))
 
-            # fallback if replace not possible
             return storage_url
         return None
+
