@@ -4,7 +4,7 @@ from ..models.herovideo import HeroVideo
 
 
 class HeroVideoSerializer(serializers.ModelSerializer):
-    video_url = serializers.SerializerMethodField(read_only=True)
+    video_url = serializers.SerializerMethodField()
 
     class Meta:
         model = HeroVideo
@@ -15,21 +15,19 @@ class HeroVideoSerializer(serializers.ModelSerializer):
             "order",
             "is_active",
             "created_at",
-            "video",       # keep video field so uploads work
-            "video_url",   # BunnyCDN-transformed URL
+            "video",
+            "video_url",
         ]
-        extra_kwargs = {
-            "video": {"required": False},   # ✅ don't force re-upload on update
-        }
+        read_only_fields = ["video_url", "created_at"]
+
+    video = serializers.FileField(required=False)  # ✅ allow PATCH without video
 
     def get_video_url(self, obj):
         if obj.video and hasattr(obj.video, "url"):
             storage_url = obj.video.url
             pull_zone = getattr(settings, "BUNNY_PULL_ZONE_URL", None)
             cdn_url = getattr(settings, "BUNNY_CDN_URL", "")
-
             if pull_zone and cdn_url:
                 return storage_url.replace(cdn_url.rstrip("/"), pull_zone.rstrip("/"))
-
             return storage_url
         return None
