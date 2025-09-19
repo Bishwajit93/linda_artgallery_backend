@@ -4,8 +4,8 @@ from artgallery.views import (
     ArtworkViewSet,
     ArtworkImageViewSet,
     ArtworkVideoViewSet,
+    HeroImageViewSet,
 )
-from artgallery.views.heroimage_views import HeroImageViewSet
 # --------------------------------------------------
 # DRF Router setup
 # Purpose:
