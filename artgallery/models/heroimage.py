@@ -7,7 +7,7 @@ def hero_image_upload_to(instance, filename):
 
 class HeroImage(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
-    image = models.ImageField(
+    image = models.FileField(   # ✅ use FileField instead of ImageField
         upload_to=hero_image_upload_to,
         storage=BunnyStorage(),
     )
