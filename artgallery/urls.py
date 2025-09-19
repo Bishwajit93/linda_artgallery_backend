@@ -5,7 +5,7 @@ from artgallery.views import (
     ArtworkImageViewSet,
     ArtworkVideoViewSet,
 )
-
+from artgallery.views.heroimage_views import HeroImageViewSet
 # --------------------------------------------------
 # DRF Router setup
 # Purpose:
@@ -35,4 +35,7 @@ router.register(r"artwork-images", ArtworkImageViewSet, basename="artwork-images
 router.register(r"artwork-videos", ArtworkVideoViewSet, basename="artwork-videos")
 
 # Expose all registered routes
+
+router.register(r"hero-images", HeroImageViewSet, basename="heroimage")
+
 urlpatterns = router.urls

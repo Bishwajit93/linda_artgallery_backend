@@ -5,10 +5,12 @@
 
 from .herovideo import HeroVideo
 from .artwork import Artwork, ArtworkImage, ArtworkVideo
+from .heroimage import HeroImage
 
 __all__ = [
     "HeroVideo",
     "Artwork",
     "ArtworkImage",
     "ArtworkVideo",
+    "HeroImage",
 ]
